@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Peta Evakuasi Tsunami - Palabuhanratu</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      background: #eef2f3;
+    }
+    h2 {
+      text-align: center;
+      background-color: #004d80;
+      color: white;
+      padding: 10px;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+    #map {
+      height: 600px;
+      margin: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .leaflet-tooltip {
+      background-color: #004d80;
+      color: #fff;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 4px;
+      padding: 4px 8px;
+      border: none;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+
+    .popup-content {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .popup-content h4 {
+      color: #004d80;
+      margin-top: 0;
+      font-size: 16px;
+    }
+    .popup-content img {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
+    .popup-content button {
+      background-color: #004d80;
+      color: white;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 8px;
+      width: 100%;
+      transition: 0.3s;
+    }
+    .popup-content button:hover {
+      background-color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <h2>Peta Evakuasi Tsunami - Palabuhanratu</h2>
+  <div id="map"></div>
+
+  <script>
+    // Inisialisasi Peta
+    var map = L.map('map').setView([-6.988, 106.548], 13);
+
+    // Base Layer
+    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var satellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0','mt1','mt2','mt3'],
+      attribution: '© Google Satellite'
+    });
+
+    var titikLayer = L.layerGroup().addTo(map);
+
+    // Ikon Titik Evakuasi
+    var iconEvakuasi = L.icon({
+      iconUrl: 'https://cdn-icons-png.flaticon.com/128/4272/4272806.png',
+      iconSize: [30, 30],
+      iconAnchor: [15, 30],
+      popupAnchor: [0, -25]
+    });
+
+    // Titik Evakuasi
+    var titikEvakuasi = [
+      {
+        name: "Titik Evakuasi 1 - Alun-Alun Palabuhanratu",
+        coords: [-6.9881, 106.5509],
+        image: "https://source.unsplash.com/300x200/?town-square,park"
+      },
+      {
+        name: "Titik Evakuasi 2 - BPBD Sukabumi",
+        coords: [-6.9827, 106.5559],
+        image: "https://source.unsplash.com/300x200/?office,emergency"
+      },
+      {
+        name: "Titik Evakuasi 3 - SMKN 1 Palabuhanratu",
+        coords: [-6.9771, 106.5450],
+        image: "https://source.unsplash.com/300x200/?school,education"
+      },
+      {
+        name: "Titik Evakuasi 4 - Lapang Badak Putih",
+        coords: [-6.9844, 106.5519],
+        image: "https://source.unsplash.com/300x200/?field,stadium"
+      }
+    ];
+
+    titikEvakuasi.forEach(lokasi => {
+      L.marker(lokasi.coords, {icon: iconEvakuasi})
+        .bindTooltip(lokasi.name, {direction: "top"})
+        .bindPopup(`
+          <div class="popup-content">
+            <h4>${lokasi.name}</h4>
+            <p>Lokasi aman yang direkomendasikan untuk evakuasi tsunami.</p>
+            <img src="${lokasi.image}">
+            <button onclick="alert('Navigasi menuju ${lokasi.name}')">📍 Arahkan ke Lokasi</button>
+          </div>
+        `)
+        .addTo(titikLayer);
+    });
+
+    // Fungsi Membuat Jalur Evakuasi berwarna biru
+    function buatJalurEvakuasi(coords, nama, deskripsi, warna) {
+      var jalur = L.polyline(coords, {
+        color: warna,
+        weight: 6,
+        opacity: 0.9
+      })
+      .bindTooltip(nama, {sticky: true})
+      .bindPopup(`
+        <div class="popup-content">
+          <h4>${nama}</h4>
+          <p>${deskripsi}</p>
+          <button onclick="alert('Menampilkan info jalur: ${nama}')">ℹ️ Detail Jalur</button>
+        </div>
+      `)
+      .on('mouseover', function() { this.setStyle({color: '#00bfff', weight: 8}); })
+      .on('mouseout', function() { this.setStyle({color: warna, weight: 6}); })
+      .addTo(map);
+      return jalur;
+    }
+
+    // Jalur Evakuasi (Berwarna Biru 4 Segmen)
+    var jalur1 = buatJalurEvakuasi([
+      [-6.9883, 106.5509],
+      [-6.9887, 106.5508],
+      [-6.9877, 106.5448],
+      [-6.9871, 106.5437]
+    ], "Jalur Evakuasi 1", "Dari arah pasar ikan menuju Alun-Alun Palabuhanratu.", "blue");
+
+    var jalur2 = buatJalurEvakuasi([
+      [-6.9833832712212445, 106.55622652161097],
+      [-6.983555699886805, 106.5570148639802],
+      [-6.985428162790876, 106.55696577050664],
+      [-6.985818264273193, 106.55286108307862],
+      [-6.988150020845379, 106.55091109177505]
+    ], "Jalur Evakuasi 2", "Dari arah selatan menuju Kantor BPBD Sukabumi.", "blue");
+
+    var jalur3 = buatJalurEvakuasi([
+      [-6.9770, 106.5450],
+      [-6.9788, 106.5467],
+      [-6.9792, 106.5404],
+      [-6.9811, 106.5395]
+    ], "Jalur Evakuasi 3", "Dari arah timur menuju SMKN 1 Palabuhanratu.", "blue");
+
+    var jalur4 = buatJalurEvakuasi([
+      [-6.9858, 106.5434],
+      [-6.9865, 106.5507],
+      [-6.9856, 106.5507],
+      [-6.9844, 106.5519]
+    ], "Jalur Evakuasi 4", "Dari arah polsek menuju lapangan badak putih.", "blue");
+
+    // Zona Rawan Tsunami
+    var zonaRawan = [
+      [-6.982, 106.534],
+      [-6.979, 106.5409],
+      [-6.9874, 106.5515],
+      [-6.9959, 106.5479],
+      [-6.9998, 106.5423],
+      [-6.9911, 106.5418],
+      [-6.9869, 106.5426],
+      [-6.9822, 106.5404]
+    ];
+
+    var polygon = L.polygon(zonaRawan, {
+      color: 'red',
+      fillColor: 'orange',
+      fillOpacity: 0.4
+    }).bindTooltip("Zona Rawan Tsunami", {direction: "center"})
+      .bindPopup("<b>Zona Rawan Tsunami</b><br>Wilayah dengan risiko tinggi di sekitar pantai.")
+      .addTo(map);
+
+    // Layer Control 
+    var baseMaps = { "OpenStreetMap": osm, "Satellite": satellite };
+    var overlayMaps = {
+      "Titik Evakuasi": titikLayer,
+      "Jalur Evakuasi sementara": jalur1,
+      "Jalur Evakuasi 1": jalur2,
+      "Jalur Evakuasi 2": jalur3,
+      "Jalur Evakuasi 3": jalur4,
+      "Zona Rawan Tsunami": polygon
+    };
+
+    L.control.layers(baseMaps, overlayMaps, {collapsed:false}).addTo(map);
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Masjid Agung Palabuhanratu", "keterangan": "Tempat evakuasi darurat" },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [106.547, -7.011]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "SMPN 1 Palabuhanratu", "keterangan": "Tempat pengungsian sementara" },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [106.553, -7.012]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Posko BNPB Palabuhanratu", "keterangan": "Pos pantau dan logistik utama" },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [106.549, -7.008]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Jalur Evakuasi Utama" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.553, -7.012],
+          [106.547, -7.011],
+          [106.549, -7.008]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Zona Rawan Tsunami" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [106.540, -7.018],
+            [106.555, -7.020],
+            [106.560, -7.010],
+            [106.545, -7.006],
+            [106.540, -7.018]
+          ]
+        ]
+      }
+    }
+  ]
+}
